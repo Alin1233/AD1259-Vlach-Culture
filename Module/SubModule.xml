@@ -2,7 +2,7 @@
 <Module>
 	<Name value="AD1259 - Vlach Culture"/>
 	<Id value="AD1259_Vlach"/>
-	<Version value="v1.0.0"/>
+	<Version value="v1.0.1"/>
 	<DefaultModule value="false"/>
 	<ModuleCategory value="Singleplayer"/>
 	<Official value="false"/>

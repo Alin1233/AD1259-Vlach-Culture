@@ -15,7 +15,8 @@
       7. every id referenced by the module exists in the modlist's data
       8. the culture is complete (culture-keyed equipment twins, names, basic troops, glyphs)
       9. the troop tree is sane (reachable, levels rise, cavalry has horses)
-     10. the DLL registers the culture inside the real AD1259.dll (run in a child process)
+     10. the DLL registers the culture inside the real AD1259.dll and copies the culture-art
+         style on a real Gauntlet brush (run in a child process)
      11. the sources also compile with the .NET Framework compiler (C# 5)
 
     Exit code 0 when all checks pass, 1 otherwise.
@@ -400,6 +401,36 @@ $ok = $ad.GetType('AD1259.Patches.CultureMapUtil').GetMethod('TryGetBaseCulture'
 "BASE|$ok|$($callArgs[1])"
 $r2 = $register.Invoke($null, @($ad, 'vlach')); "R2|$($r2.Success)|$($r2.Message)"
 "SUB|" + $vl.GetType('AD1259Vlach.SubModule').BaseType.FullName
+# Culture art: copy a style on a real Gauntlet brush the way AD1259's brush file defines it.
+try {
+    [void][Reflection.Assembly]::LoadFrom((Join-Path $GameBin 'TaleWorlds.GauntletUI.dll'))
+    $brush = New-Object TaleWorlds.GauntletUI.Brush
+    $src = New-Object TaleWorlds.GauntletUI.Style (,[TaleWorlds.GauntletUI.BrushLayer[]]@($brush.Layers))
+    $src.DefaultStyle = $brush.DefaultStyle
+    $src.Name = 'bulgaria'
+    $src.GetLayer('Default').AlphaFactor = 0.25
+    $brush.AddStyle($src)
+    [object[]]$copyArgs = @($brush.PSObject.BaseObject, 'bulgaria', 'vlach')
+    $copy = $vl.GetType('AD1259Vlach.CultureArtStyles').GetMethod('CopyStyle').Invoke($null, $copyArgs)
+    "ART|$($copy.Name)|$($brush.GetStyle('vlach').GetLayer('Default').AlphaFactor)|$($brush.GetStyle('bulgaria').Name)"
+} catch { $e = $_.Exception; while ($e.InnerException) { $e = $e.InnerException }; "ART|ERROR|$($e.GetType().Name): $($e.Message -replace '\|', '/')|" }
+# Culture-card sprite: aliases in a real SpriteData, found by the same lookup the widget uses.
+try {
+    [void][Reflection.Assembly]::LoadFrom((Join-Path $GameBin 'TaleWorlds.TwoDimension.dll'))
+    $data = New-Object TaleWorlds.TwoDimension.SpriteData 'probe'
+    $sprites = @{}
+    foreach ($suffix in '', '_1', '_2', '_3', '_4') {
+        $sprites[$suffix] = [Runtime.Serialization.FormatterServices]::GetUninitializedObject([TaleWorlds.TwoDimension.SpriteGeneric])
+        $data.Sprites['CharacterCreation\Culture\bulgaria' + $suffix] = $sprites[$suffix]
+    }
+    $aliases = $vl.GetType('AD1259Vlach.CultureArtStyles').GetMethod('AddSpriteAliases')
+    $problems = New-Object 'System.Collections.Generic.List[string]'
+    [object[]]$aliasArgs = @($data.PSObject.BaseObject, 'bulgaria', 'vlach', $problems.PSObject.BaseObject)
+    $first = $aliases.Invoke($null, $aliasArgs)
+    $second = $aliases.Invoke($null, $aliasArgs)
+    $same = 0; foreach ($suffix in $sprites.Keys) { if ($data.SpriteExists('CharacterCreation\Culture\vlach' + $suffix) -and [object]::ReferenceEquals($data.GetSprite('CharacterCreation\Culture\vlach' + $suffix), $sprites[$suffix])) { $same++ } }
+    "SPRITE|$first|$second|$same|$($problems.Count)"
+} catch { $e = $_.Exception; while ($e.InnerException) { $e = $e.InnerException }; "SPRITE|ERROR|$($e.GetType().Name): $($e.Message -replace '\|', '/')|||" }
 '@ | Set-Content -Path $probe -Encoding UTF8
     try {
         $lines = & powershell -NoProfile -ExecutionPolicy Bypass -File $probe -GameBin $gameBin `
@@ -413,6 +444,20 @@ $r2 = $register.Invoke($null, @($ad, 'vlach')); "R2|$($r2.Success)|$($r2.Message
         if ($map['BASE|'][1] -ne 'True' -or $map['BASE|'][2] -ne 'empire') { "AD1259 maps vlach to '$($map['BASE|'][2])', expected 'empire'" }
         if ($map['R2|'][1] -ne 'True' -or $map['R2|'][2] -notmatch 'already registered') { "second registration not idempotent: $($map['R2|'][2])" }
         if ($map['SUB|'][1] -ne 'TaleWorlds.MountAndBlade.MBSubModuleBase') { "SubModule derives from $($map['SUB|'][1])" }
+        if (-not $map.ContainsKey('ART|')) { 'culture-art probe produced no output' }
+        elseif ($map['ART|'][1] -ne 'vlach' -or $map['ART|'][2] -ne '0.25' -or $map['ART|'][3] -ne 'bulgaria') { "culture-art style copy failed: $($map['ART|'][1..3] -join ' | ')" }
+        if (-not $map.ContainsKey('SPRITE|')) { 'culture-sprite probe produced no output' }
+        elseif (($map['SPRITE|'][1..4] -join ',') -ne '5,0,5,0') { "culture-sprite aliases wrong (added, re-added, resolved, problems): $($map['SPRITE|'][1..4] -join ' | ')" }
+        # The aliases need the template culture's sprites to exist in AD1259's sprite data.
+        $spriteXml = Join-Path $adDir 'GUI\AD1259SpriteData.xml'
+        if (-not (Test-Path $spriteXml)) { "AD1259 sprite data not found: $spriteXml" }
+        else {
+            $names = @{}; foreach ($n in (Read-XmlFile $spriteXml).SelectNodes('//*[SpritePartName]/Name')) { $names[$n.InnerText] = $true }
+            foreach ($suffix in '', '_1', '_2', '_3', '_4') {
+                $name = 'CharacterCreation\Culture\' + $cfg.TemplateCulture + $suffix
+                if (-not $names.ContainsKey($name)) { "AD1259 has no sprite '$name' to alias" }
+            }
+        }
     } finally { Remove-Item $probe -ErrorAction SilentlyContinue }
 }
 

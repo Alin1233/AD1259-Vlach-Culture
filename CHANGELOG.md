@@ -1,5 +1,15 @@
 # Changelog
 
+## v1.0.1 (2026-11-10)
+
+- Fixed: the Vlach culture showed placeholder art on the character-creation culture screen
+  (copying Bulgaria's art styles threw a NullReferenceException at startup).
+- Fixed: the Vlach card in the culture list showed the blank placeholder icon. The card looks
+  up the sprite `CharacterCreation\Culture\vlach` by name; Bulgaria's sprites are now
+  registered under the Vlach names at startup.
+- Tests: check 10 now also copies a culture-art style on a real Gauntlet brush, checks the
+  sprite aliases in a real SpriteData, and checks that AD1259 ships the sprites being aliased.
+
 ## v1.0.0 (2026-11-10)
 
 First release, for Anno Domini 1259 v1.4.6 on Bannerlord v1.4.8.

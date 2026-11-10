@@ -52,6 +52,8 @@ namespace AD1259Vlach
                     var problems = new List<string>();
                     int added = CultureArtStyles.Apply(VlachIds.TemplateCultureId, VlachIds.CultureId, problems);
                     Log("Added " + added + " character-creation art style(s) for '" + VlachIds.CultureId + "'.");
+                    int sprites = CultureArtStyles.ApplySprites(VlachIds.TemplateCultureId, VlachIds.CultureId, problems);
+                    Log("Added " + sprites + " culture sprite alias(es) for '" + VlachIds.CultureId + "'.");
                     foreach (string problem in problems)
                     {
                         Log("Art: " + problem);

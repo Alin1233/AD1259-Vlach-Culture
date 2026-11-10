@@ -10,7 +10,7 @@ settlement keeps its owner.
 | | |
 |---|---|
 | Module id | `AD1259_Vlach` (folder `Modules\AD1259_Vlach`) |
-| Version | v1.0.0 |
+| Version | v1.0.1 |
 | Requires | Anno Domini 1259 **v1.4.6** and its required mods |
 | Built and tested on | Bannerlord v1.4.8 |
 | Save games | **New campaign required.** Do not add it to, or remove it from, an existing save. |
@@ -55,7 +55,7 @@ Full lists are in [docs/CONTENT.md](docs/CONTENT.md).
 ### Players
 
 1. Install Anno Domini 1259 v1.4.6 and its requirements as described on its Nexus page.
-2. Download **`AD1259_Vlach-v1.0.0.zip`** from the
+2. Download **`AD1259_Vlach-v1.0.1.zip`** from the
    [latest release](https://github.com/Alin1233/AD1259-Vlach-Culture/releases/latest).
 3. Extract it (7-Zip or Windows) into `...\Mount & Blade II Bannerlord\Modules\`, so that you get
    `Modules\AD1259_Vlach\SubModule.xml`.
@@ -91,6 +91,7 @@ with the prefix `[AD1259_Vlach]`. A healthy start shows:
 ```
 [AD1259_Vlach] Registered culture 'vlach' with AD1259 (AllCultureIds, CulturesWithOwnEquipmentsIds, EmpireCultureIds).
 [AD1259_Vlach] Added 4 character-creation art style(s) for 'vlach'.
+[AD1259_Vlach] Added 5 culture sprite alias(es) for 'vlach'.
 ```
 
 If registration fails (usually a different AD1259 version), a red message appears on the main

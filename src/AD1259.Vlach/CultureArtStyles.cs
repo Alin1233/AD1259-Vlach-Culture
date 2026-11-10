@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TaleWorlds.Engine.GauntletUI;
 using TaleWorlds.GauntletUI;
+using TaleWorlds.TwoDimension;
 
 namespace AD1259Vlach
 {
@@ -52,19 +53,85 @@ namespace AD1259Vlach
                 {
                     continue;
                 }
-                Style source = HasStyle(brush, fromStyle) ? brush.GetStyle(fromStyle) : null;
-                if (source == null)
+                if (!HasStyle(brush, fromStyle))
                 {
                     problems.Add("Brush '" + brushName + "' has no '" + fromStyle + "' style to copy.");
                     continue;
                 }
+                CopyStyle(brush, fromStyle, toStyle);
+                added++;
+            }
+            return added;
+        }
 
-                // Same construction the brush loader uses: a style holds one layer per brush layer.
-                var copy = new Style(brush.Layers);
-                copy.FillFrom(source);
-                copy.Name = toStyle;
-                copy.DefaultStyle = brush.DefaultStyle;
-                brush.AddStyle(copy);
+        /// <summary>
+        /// Adds a copy of style <paramref name="fromStyle"/> named <paramref name="toStyle"/> to
+        /// <paramref name="brush"/>. The brush must have <paramref name="fromStyle"/>.
+        /// </summary>
+        public static Style CopyStyle(Brush brush, string fromStyle, string toStyle)
+        {
+            Style source = brush.GetStyle(fromStyle);
+
+            // Same construction the brush loader uses: a style holds one layer per brush layer.
+            var copy = new Style(brush.Layers);
+            // DefaultStyle must be set before FillFrom: Style's property setters compare against
+            // the current value, and an unset property reads through to DefaultStyle.
+            copy.DefaultStyle = brush.DefaultStyle;
+            copy.FillFrom(source);
+            copy.Name = toStyle;
+            brush.AddStyle(copy);
+            return copy;
+        }
+
+        /// <summary>
+        /// Sprite-name prefix of the culture artwork. The culture cards in the selection list
+        /// (CharacterCreationCultureVisualBrushWidget with small visuals) look up the sprite
+        /// "CharacterCreation\Culture\" + culture id by name and fall back to
+        /// "CharacterCreation\Culture\blank_culture" (the placeholder) when it does not exist.
+        /// </summary>
+        public const string SpritePrefix = @"CharacterCreation\Culture\";
+
+        public static readonly string[] SpriteSuffixes = { "", "_1", "_2", "_3", "_4" };
+
+        /// <summary>
+        /// Registers the template culture's sprites under the new culture's names in the game's
+        /// sprite table. Returns the number of aliases added; problems go to <paramref name="problems"/>.
+        /// </summary>
+        public static int ApplySprites(string fromCulture, string toCulture, List<string> problems)
+        {
+            SpriteData data = UIResourceManager.SpriteData;
+            if (data == null)
+            {
+                problems.Add("UIResourceManager.SpriteData is not initialised yet.");
+                return 0;
+            }
+            return AddSpriteAliases(data, fromCulture, toCulture, problems);
+        }
+
+        /// <summary>
+        /// Adds "CharacterCreation\Culture\{toCulture}{suffix}" as an alias of the
+        /// "{fromCulture}{suffix}" sprite for each suffix. The Sprite object is shared, so its
+        /// sprite category (texture sheet) is loaded and unloaded exactly as for the template
+        /// culture. Idempotent; an existing sprite of the new name is never replaced.
+        /// </summary>
+        public static int AddSpriteAliases(SpriteData data, string fromCulture, string toCulture, List<string> problems)
+        {
+            int added = 0;
+            foreach (string suffix in SpriteSuffixes)
+            {
+                string toName = SpritePrefix + toCulture + suffix;
+                if (data.Sprites.ContainsKey(toName))
+                {
+                    continue;
+                }
+                string fromName = SpritePrefix + fromCulture + suffix;
+                Sprite source;
+                if (!data.Sprites.TryGetValue(fromName, out source) || source == null)
+                {
+                    problems.Add("Sprite '" + fromName + "' not found (is AD1259 enabled?).");
+                    continue;
+                }
+                data.Sprites[toName] = source;
                 added++;
             }
             return added;
