@@ -55,10 +55,14 @@ Full lists are in [docs/CONTENT.md](docs/CONTENT.md).
 ### Players
 
 1. Install Anno Domini 1259 v1.4.6 and its requirements as described on its Nexus page.
-2. Copy the `AD1259_Vlach` folder into `...\Mount & Blade II Bannerlord\Modules\`.
-3. Right-click `bin\Win64_Shipping_Client\AD1259.Vlach.dll` > Properties > *Unblock* (if shown).
-4. In the launcher enable **AD1259 - Vlach Culture** and place it **directly after AD1259**.
-5. Start a **new** sandbox campaign and pick *Vlach*.
+2. Download **`AD1259_Vlach-v1.0.0.zip`** from the
+   [latest release](https://github.com/Alin1233/AD1259-Vlach-Culture/releases/latest).
+3. Extract it (7-Zip or Windows) into `...\Mount & Blade II Bannerlord\Modules\`, so that you get
+   `Modules\AD1259_Vlach\SubModule.xml`.
+4. Right-click `Modules\AD1259_Vlach\bin\Win64_Shipping_Client\AD1259.Vlach.dll` > Properties >
+   tick *Unblock* > OK (only if Windows shows that checkbox).
+5. In the launcher enable **AD1259 - Vlach Culture** and place it **directly after AD1259**.
+6. Start a **new** sandbox campaign and pick *Vlach*.
 
 Load order:
 
@@ -122,12 +126,16 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 # build + test + install into the game:
 powershell -ExecutionPolicy Bypass -File build.ps1 -Install
 
+# build + test + release archive (out\AD1259_Vlach-<version>.zip):
+powershell -ExecutionPolicy Bypass -File build.ps1 -Package
+
 # custom game folder:
 powershell -ExecutionPolicy Bypass -File build.ps1 -GameDir "D:\Games\Mount & Blade II Bannerlord" -Install
 ```
 
 `build.ps1 -Install` refuses to install if any test fails and only ever replaces a folder whose
-`SubModule.xml` has the id `AD1259_Vlach`.
+`SubModule.xml` has the id `AD1259_Vlach`. `-Package` refuses to build an archive without
+running the tests.
 
 ## Credits
 
@@ -139,3 +147,9 @@ powershell -ExecutionPolicy Bypass -File build.ps1 -GameDir "D:\Games\Mount & Bl
   Armoury, Templar Armor / Equipment. No assets are redistributed; only their ids are used.
 - Historical names follow the 1247 Diploma of the Knights Hospitaller (Seneslau, Litovoi,
   Ioan, Farcaş) and the later Wallachian and Moldavian dynasties.
+
+## License
+
+[MIT](LICENSE). The generated data files are derived from Anno Domini 1259, whose files are open
+source on condition that its authors are credited; keep that credit when redistributing. No
+game assets are included. See [LICENSE](LICENSE) for the third-party notice.

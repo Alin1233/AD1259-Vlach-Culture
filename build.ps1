@@ -7,7 +7,9 @@
     2. compiles src\AD1259.Vlach\*.cs into AD1259.Vlach.dll against the game's assemblies
     3. assembles the module in out\AD1259_Vlach (Module\ + bin\Win64_Shipping_Client\)
     4. runs tests\Test-Module.ps1 (skip with -SkipTests)
-    5. (optional, -Install) copies out\AD1259_Vlach to <GameDir>\Modules\AD1259_Vlach
+    5. (optional, -Package) writes the release archive out\AD1259_Vlach-<version>.zip
+       (one top-level AD1259_Vlach folder, to be extracted into Modules\)
+    6. (optional, -Install) copies out\AD1259_Vlach to <GameDir>\Modules\AD1259_Vlach
 
     The C# code is kept at language version 5 so it also compiles with the compiler that
     ships with Windows (.NET Framework 4.x csc.exe); a Roslyn csc.exe from Visual Studio /
@@ -21,6 +23,7 @@ param(
     [string]$GameDir = 'C:\Program Files (x86)\Steam\steamapps\common\Mount & Blade II Bannerlord',
     [switch]$Generate,
     [switch]$SkipTests,
+    [switch]$Package,
     [switch]$Install
 )
 
@@ -30,6 +33,12 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $moduleId = 'AD1259_Vlach'
 $out = Join-Path $root "out\$moduleId"
 $gameBin = Join-Path $GameDir 'bin\Win64_Shipping_Client'
+
+function Read-SubModuleVersion([string]$Path) {
+    $doc = New-Object System.Xml.XmlDocument
+    $doc.Load($Path)
+    return $doc.SelectSingleNode('/Module/Version').GetAttribute('value')
+}
 
 function Find-Compiler {
     $candidates = @()
@@ -86,16 +95,37 @@ Write-Host 'Compiled AD1259.Vlach.dll'
 
 # --- 3. Assemble -------------------------------------------------------------------
 Copy-Item (Join-Path $root 'Module\*') $out -Recurse -Force
-Copy-Item (Join-Path $root 'README.md') $out -Force -ErrorAction SilentlyContinue
+foreach ($doc in 'README.md', 'LICENSE', 'CHANGELOG.md') { Copy-Item (Join-Path $root $doc) $out -Force }
 Write-Host "Assembled module in $out"
 
 # --- 4. Test -----------------------------------------------------------------------
 if (-not $SkipTests) {
     & powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $root 'tests\Test-Module.ps1') -GameDir $GameDir -ModuleDir $out
-    if ($LASTEXITCODE -ne 0) { throw 'Tests failed; not installing.' }
+    if ($LASTEXITCODE -ne 0) { throw 'Tests failed; not packaging or installing.' }
+} elseif ($Package) {
+    throw 'Refusing to package an untested build: do not combine -Package with -SkipTests.'
 }
 
-# --- 5. Install --------------------------------------------------------------------
+# --- 5. Package --------------------------------------------------------------------
+if ($Package) {
+    $version = (Read-SubModuleVersion (Join-Path $out 'SubModule.xml'))
+    $zip = Join-Path $root "out\$moduleId-$version.zip"
+    if (Test-Path $zip) { Remove-Item -Force $zip }
+    Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
+    # Entries are written by hand: Compress-Archive on Windows PowerShell 5.1 stores
+    # backslash separators, which some launchers/extractors do not treat as folders.
+    $archive = [System.IO.Compression.ZipFile]::Open($zip, [System.IO.Compression.ZipArchiveMode]::Create)
+    try {
+        $base = (Split-Path -Parent $out).Length + 1
+        foreach ($file in Get-ChildItem $out -Recurse -File | Where-Object { $_.Extension -ne '.pdb' } | Sort-Object FullName) {
+            $entry = $file.FullName.Substring($base).Replace('\', '/')
+            [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive, $file.FullName, $entry, [System.IO.Compression.CompressionLevel]::Optimal)
+        }
+    } finally { $archive.Dispose() }
+    Write-Host "Packaged $zip"
+}
+
+# --- 6. Install --------------------------------------------------------------------
 if ($Install) {
     $target = Join-Path $GameDir "Modules\$moduleId"
     if (Test-Path $target) {
