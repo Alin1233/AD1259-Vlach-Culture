@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+	<Name value="AD1259 - Vlach Culture"/>
+	<Id value="AD1259_Vlach"/>
+	<Version value="v1.0.0"/>
+	<DefaultModule value="false"/>
+	<ModuleCategory value="Singleplayer"/>
+	<Official value="false"/>
+
+	<!-- Must load after AD1259: the .xslt patches transform AD1259's data and the DLL
+	     extends AD1259's culture lists. Built and tested against AD1259 v1.4.6 on
+	     Bannerlord v1.4.8. -->
+	<DependedModules>
+		<DependedModule Id="Native" Optional="false"/>
+		<DependedModule Id="SandBoxCore" Optional="false"/>
+		<DependedModule Id="Sandbox" Optional="false"/>
+		<DependedModule Id="AD1259" DependentVersion="v1.4.6" Optional="false"/>
+	</DependedModules>
+	<ModulesToLoadAfterThis/>
+	<IncompatibleModules/>
+
+	<SubModules>
+		<SubModule>
+			<Name value="AD1259_Vlach"/>
+			<DLLName value="AD1259.Vlach.dll"/>
+			<SubModuleClassType value="AD1259Vlach.SubModule"/>
+			<Tags>
+				<Tag key="DedicatedServerType" value="none"/>
+				<Tag key="IsNoRenderModeElement" value="false"/>
+			</Tags>
+		</SubModule>
+	</SubModules>
+
+	<!-- Game types follow AD1259's own SubModule.xml (Campaign + CustomGame). -->
+	<Xmls>
+		<!-- The culture -->
+		<XmlNode>
+			<XmlName id="SPCultures" path="vlach_generated_culture"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="GameText" path="vlach_strings"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+
+		<!-- Troops, NPC templates, equipment and parties -->
+		<XmlNode>
+			<XmlName id="NPCCharacters" path="vlach_generated_troops"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="NPCCharacters" path="vlach_generated_characters"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="EquipmentRosters" path="vlach_generated_equipment"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="partyTemplates" path="vlach_party_templates"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+
+		<!-- Patches of AD1259 data (empty .xml + .xslt pairs) -->
+		<XmlNode>
+			<XmlName id="NPCCharacters" path="vlach_lords"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="Factions" path="vlach_clans"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+		<XmlNode>
+			<XmlName id="Settlements" path="vlach_settlements"/>
+			<IncludedGameTypes>
+				<GameType value="Campaign"/>
+				<GameType value="CustomGame"/>
+			</IncludedGameTypes>
+		</XmlNode>
+	</Xmls>
+</Module>

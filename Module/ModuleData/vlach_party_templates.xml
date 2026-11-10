@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	AD1259 - Vlach Culture : party templates referenced by the Vlach culture.
+	Villagers, caravans and militia deliberately reuse Bulgaria's templates
+	(villager_bulgaria_template, caravan_template_bulgaria, militia_bulgaria_template),
+	in line with AD1259's "Bulgaria and Vlachs, 2 in 1" design.
+	Proportions follow AD1259's kingdom_hero_party_BULGARIA_template.
+-->
+<partyTemplates>
+	<!-- Starting / reinforcement party of Vlach lords (clan culture = Vlach). -->
+	<MBPartyTemplate id="kingdom_hero_party_vlach_template">
+		<stacks>
+			<PartyTemplateStack min_value="5" max_value="10" troop="NPCCharacter.vlach_levy"/>
+			<PartyTemplateStack min_value="5" max_value="10" troop="NPCCharacter.vlach_serf"/>
+			<PartyTemplateStack min_value="2" max_value="4" troop="NPCCharacter.vlach_footman"/>
+			<PartyTemplateStack min_value="1" max_value="2" troop="NPCCharacter.vlach_spearman"/>
+			<PartyTemplateStack min_value="0" max_value="1" troop="NPCCharacter.vlach_veteran_spearman"/>
+			<PartyTemplateStack min_value="0" max_value="1" troop="NPCCharacter.vlach_maceman"/>
+			<PartyTemplateStack min_value="2" max_value="4" troop="NPCCharacter.vlach_hunter"/>
+			<PartyTemplateStack min_value="1" max_value="2" troop="NPCCharacter.vlach_bowman"/>
+			<PartyTemplateStack min_value="4" max_value="8" troop="NPCCharacter.vlach_rider"/>
+			<PartyTemplateStack min_value="2" max_value="4" troop="NPCCharacter.vlach_horse_archer"/>
+			<PartyTemplateStack min_value="1" max_value="2" troop="NPCCharacter.vlach_veteran_horse_archer"/>
+			<PartyTemplateStack min_value="2" max_value="4" troop="NPCCharacter.vlach_noble_youth"/>
+			<PartyTemplateStack min_value="1" max_value="2" troop="NPCCharacter.vlach_viteaz"/>
+			<PartyTemplateStack min_value="1" max_value="2" troop="NPCCharacter.vlach_dismounted_viteaz"/>
+			<PartyTemplateStack min_value="1" max_value="1" troop="NPCCharacter.vlach_curtean"/>
+			<PartyTemplateStack min_value="1" max_value="1" troop="NPCCharacter.vlach_boyar"/>
+		</stacks>
+	</MBPartyTemplate>
+
+	<!-- Settlement patrols of Vlach towns. -->
+	<MBPartyTemplate id="patrol_party_vlach_template_level_1">
+		<stacks>
+			<PartyTemplateStack min_value="8" max_value="8" troop="NPCCharacter.vlach_levy"/>
+			<PartyTemplateStack min_value="4" max_value="4" troop="NPCCharacter.vlach_serf"/>
+			<PartyTemplateStack min_value="2" max_value="2" troop="NPCCharacter.vlach_noble_youth"/>
+			<PartyTemplateStack min_value="1" max_value="1" troop="NPCCharacter.vlach_viteaz"/>
+		</stacks>
+	</MBPartyTemplate>
+	<MBPartyTemplate id="patrol_party_vlach_template_level_2">
+		<stacks>
+			<PartyTemplateStack min_value="9" max_value="9" troop="NPCCharacter.vlach_levy"/>
+			<PartyTemplateStack min_value="5" max_value="5" troop="NPCCharacter.vlach_serf"/>
+			<PartyTemplateStack min_value="4" max_value="4" troop="NPCCharacter.vlach_noble_youth"/>
+			<PartyTemplateStack min_value="2" max_value="2" troop="NPCCharacter.vlach_viteaz"/>
+		</stacks>
+	</MBPartyTemplate>
+	<MBPartyTemplate id="patrol_party_vlach_template_level_3">
+		<stacks>
+			<PartyTemplateStack min_value="10" max_value="10" troop="NPCCharacter.vlach_levy"/>
+			<PartyTemplateStack min_value="6" max_value="6" troop="NPCCharacter.vlach_serf"/>
+			<PartyTemplateStack min_value="4" max_value="4" troop="NPCCharacter.vlach_noble_youth"/>
+			<PartyTemplateStack min_value="3" max_value="3" troop="NPCCharacter.vlach_viteaz"/>
+			<PartyTemplateStack min_value="2" max_value="2" troop="NPCCharacter.vlach_curtean"/>
+		</stacks>
+	</MBPartyTemplate>
+
+	<!-- Rebels raised in a Vlach town. -->
+	<MBPartyTemplate id="rebels_vlach_template">
+		<stacks>
+			<PartyTemplateStack min_value="1" max_value="1" troop="NPCCharacter.vlach_levy"/>
+		</stacks>
+	</MBPartyTemplate>
+
+	<!-- Troops granted when a Vlach ruler takes the player as a vassal. -->
+	<MBPartyTemplate id="vassal_reward_troops_vlach">
+		<stacks>
+			<PartyTemplateStack min_value="5" max_value="10" troop="NPCCharacter.vlach_curtean"/>
+			<PartyTemplateStack min_value="1" max_value="3" troop="NPCCharacter.vlach_boyar"/>
+		</stacks>
+	</MBPartyTemplate>
+</partyTemplates>
