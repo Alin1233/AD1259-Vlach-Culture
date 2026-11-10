@@ -95,7 +95,7 @@ Write-Host 'Compiled AD1259.Vlach.dll'
 
 # --- 3. Assemble -------------------------------------------------------------------
 Copy-Item (Join-Path $root 'Module\*') $out -Recurse -Force
-foreach ($doc in 'README.md', 'LICENSE', 'CHANGELOG.md') { Copy-Item (Join-Path $root $doc) $out -Force }
+foreach ($doc in 'README.md', 'LICENSE', 'NOTICE', 'CHANGELOG.md') { Copy-Item (Join-Path $root $doc) $out -Force }
 Write-Host "Assembled module in $out"
 
 # --- 4. Test -----------------------------------------------------------------------

@@ -19,16 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
--------------------------------------------------------------------------------
-Third-party content
-
-The files Module/ModuleData/vlach_generated_*.xml are derived from data of
-"Anno Domini 1259 continued" (new 1259 Team: Bubu, d&h, Almo; original AD1259 by
-Yannis and contributors), whose files are open source on condition that its
-authors are credited. That credit must be kept in any redistribution.
-
-No game assets (models, textures, sounds) are included. Equipment, troops and
-scenes are referenced by id only and remain the property of their authors
-(Anno Domini 1259, Swadian Armoury, Open Source Armory / Saddlery / Weaponry,
-Calradic / Expanded Bannerlord Armoury, Templar Armor / Equipment, TaleWorlds).

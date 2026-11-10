@@ -152,4 +152,4 @@ running the tests.
 
 [MIT](LICENSE). The generated data files are derived from Anno Domini 1259, whose files are open
 source on condition that its authors are credited; keep that credit when redistributing. No
-game assets are included. See [LICENSE](LICENSE) for the third-party notice.
+game assets are included. See [NOTICE](NOTICE) for the third-party notice.
